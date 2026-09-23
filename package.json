@@ -1,0 +1,35 @@
+{
+  "name": "shortly",
+  "version": "1.0.0",
+  "description": "Production-grade URL shortening & analytics platform",
+  "main": "src/server.js",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "jest --runInBand",
+    "migrate": "node-pg-migrate up",
+    "migrate:down": "node-pg-migrate down"
+  },
+  "keywords": [
+    "url-shortener",
+    "nodejs",
+    "express",
+    "postgresql",
+    "redis"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "dotenv": "^18.0.3",
+    "express": "^5.2.1",
+    "nodemon": "^3.1.14",
+    "pg": "^8.23.0",
+    "pino": "^10.3.1",
+    "pino-http": "^11.0.0",
+    "redis": "^6.2.1"
+  }
+}

@@ -1,0 +1,41 @@
+# Add a unique project name at the very top
+name: shortly-v2
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: shortly-postgres-v2  # Changed name
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-shortly}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-shortlysecret}
+      POSTGRES_DB: ${POSTGRES_DB:-shortly}
+    ports:
+      - "5433:5432"  # Changed host port from 5432 to 5433
+    volumes:
+      - postgres_data_v2:/var/lib/postgresql/data  # Unique volume name
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-shortly} -d ${POSTGRES_DB:-shortly}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  redis:
+    image: redis:7-alpine
+    container_name: shortly-redis-v2  # Changed name
+    restart: unless-stopped
+    ports:
+      - "6380:6379"  # Changed host port from 6379 to 6380
+    volumes:
+      - redis_data_v2:/data  # Unique volume name
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+
+volumes:
+  postgres_data_v2:  # Unique volume name
+  redis_data_v2:     # Unique volume name
