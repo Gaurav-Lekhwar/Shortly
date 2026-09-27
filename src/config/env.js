@@ -1,24 +1,30 @@
 const dotenv = require('dotenv');
 
-// Load .env file into process.env (only in non-production usually, but fine for now)
+// Load variables from .env into process.env
 dotenv.config();
 
 const env = {
   nodeEnv: process.env.NODE_ENV || 'development',
-  port: parseInt(process.env.PORT, 10) || 3001,
+
+  // Safely parse PORT so we never get NaN
+  port: (() => {
+    const parsed = parseInt(process.env.PORT, 10);
+    return Number.isNaN(parsed) ? 3001 : parsed;
+  })(),
+
   appUrl: process.env.APP_URL || 'http://localhost:3001',
 
   // Database
   databaseUrl: process.env.DATABASE_URL,
 
-  // Redis
+  // Redis – keep 6380 only if that is what your docker-compose exposes
   redisUrl: process.env.REDIS_URL || 'redis://localhost:6380',
 
   // Session
   sessionSecret: process.env.SESSION_SECRET,
 };
 
-// Simple required-variable check (we will improve this later with Zod if needed)
+// Fail fast if required variables are missing
 function requireEnv(key, value) {
   if (!value) {
     throw new Error(`Missing required environment variable: ${key}`);
