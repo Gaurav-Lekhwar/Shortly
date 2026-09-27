@@ -1,21 +1,22 @@
-// src/routes/health.routes.js
 const express = require('express');
-const router = express.Router();
-const pool = require('../config/database');   // or whatever you named db.js
 
-// Liveness – “is the process alive?”
-router.get('/health', (req, res) => {
-  res.status(200).json({ status: 'ok' });
+// Create the Express application instance
+// This is the core of our backend – all middleware and routes will be attached here
+const app = express();
+
+// Built-in middleware: parses incoming JSON request bodies
+// Without this, req.body would be undefined for JSON APIs
+app.use(express.json());
+
+// Simple health-check endpoint
+// Used by Docker, load balancers, and us to verify the server is alive
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    environment: process.env.NODE_ENV || 'development',
+  });
 });
 
-// Readiness – “can I serve traffic?” (includes DB check)
-router.get('/ready', async (req, res) => {
-  try {
-    await pool.query('SELECT 1');
-    res.status(200).json({ status: 'ready', database: 'connected' });
-  } catch (err) {
-    res.status(503).json({ status: 'not ready', database: 'disconnected' });
-  }
-});
-
-module.exports = router;
+// Export the app so server.js (and later tests) can use it
+// We intentionally do NOT call app.listen() here
+module.exports = app;
